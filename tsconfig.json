@@ -1,0 +1,21 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "test/types"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "target": "ES2015",
+    "declaration": true,
+    "declarationDir": "./",
+    "sourceMap": false
+  },
+  
+}
