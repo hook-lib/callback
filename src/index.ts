@@ -1,5 +1,4 @@
 import { sortBy } from 'lodash'
-// export { foo } from './foo'
 
 interface groups {
   [key: string]: any
