@@ -71,9 +71,6 @@ export default [
       }),
       filesize(),
     ],
-    external: (id) => {
-      console.log('id: ', id)
-      return /lodash|core-js|@babel\/runtime/.test(id)
-    },
+    external: (id) => /lodash|core-js|@babel\/runtime/.test(id),
   },
 ]
