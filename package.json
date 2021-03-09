@@ -11,6 +11,9 @@
     "build": "rollup -c",
     "test": "jest"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hook-lib/callback.git"
