@@ -4,6 +4,6 @@ module.exports = {
   insertPragma: false,
 
   // 末尾逗号: <es5|none|all>
-  trailingComma: 'none',
-  arrowParens: 'always'
+  trailingComma: 'es5',
+  arrowParens: 'always',
 }

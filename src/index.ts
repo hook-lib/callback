@@ -1,4 +1,5 @@
 import { sortBy } from 'lodash'
+// export { foo } from './foo'
 
 interface groups {
   [key: string]: any
@@ -13,8 +14,6 @@ interface arg {
   defaultExtra?: number
 }
 
-type args = arg | undefined
-
 interface item {
   method: func
   group?: string
@@ -27,13 +26,13 @@ export default class Callback {
   private defaultExtra: number
   public items: any[] = []
   public readonly groups: groups = {}
-  constructor(options: args) {
+  constructor(options?: arg) {
     const config = Object.assign(
       {
         defaultOrder: 1000,
-        defaultExtra: 1000
+        defaultExtra: 1000,
       },
-      options
+      options,
     )
 
     this.defaultOrder = config.defaultOrder
@@ -43,7 +42,7 @@ export default class Callback {
   configGroup(
     name: string,
     order = this.defaultOrder,
-    defaultExtra = this.defaultExtra
+    defaultExtra = this.defaultExtra,
   ) {
     this.groups[name] = [order, defaultExtra]
     return this
@@ -101,7 +100,7 @@ export default class Callback {
   }
 
   removeItems(filter: (item: item) => boolean) {
-    this.items = this.items.filter(item => !filter(item))
+    this.items = this.items.filter((item) => !filter(item))
     return this
   }
 
@@ -122,14 +121,14 @@ export default class Callback {
     return this
   }
 
-  private _sort(arr: item[] = []) {
+  private _sort(arr: item[] = []): item[] {
     return sortBy(arr, [
       (item: item) => {
         const { group } = item
         const [order] = this.getGroupConfig(group)
         return order
       },
-      (item: item) => item.extra
+      (item: item) => item.extra,
     ])
   }
 }

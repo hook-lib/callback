@@ -1,45 +1,79 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import strip from '@rollup/plugin-strip'
-// import { getBabelOutputPlugin } from '@rollup/plugin-babel'
+import babel from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
+// import typescript from 'rollup-plugin-typescript2'
+
 import filesize from 'rollup-plugin-filesize'
-// import { terser } from "rollup-plugin-terser";
+import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
-// import path from 'path'
 const input = 'src/index.ts'
+
+const extensions = ['.js', '.jsx', '.ts', '.tsx']
+
+const packageName = pkg.name
+  .replace('@', '')
+  .replace('/', '-')
+  .split('-')
+  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  .join('')
 export default [
+  {
+    input,
+    output: {
+      file: pkg.browser,
+      format: 'umd',
+      name: packageName,
+      globals: {},
+      sourcemap: true,
+    },
+    plugins: [
+      typescript({
+        tsconfig: './tsconfig.json',
+      }),
+      resolve({ extensions }),
+      commonjs(),
+      babel({
+        babelHelpers: 'runtime',
+        exclude: 'node_modules/**',
+        extensions,
+      }),
+
+      strip(),
+      terser(),
+      filesize(),
+    ],
+  },
   {
     input,
     output: [
       {
         file: pkg.module,
-        format: 'es',
-        exports: 'default',
-        sourcemap: false
+        format: 'esm',
+        sourcemap: true,
       },
       {
         file: pkg.main,
         format: 'cjs',
+        sourcemap: true,
         exports: 'auto',
-        sourcemap: false
-      }
+      },
     ],
     plugins: [
       typescript({ tsconfig: './tsconfig.json' }),
-      resolve(),
+      resolve({ extensions }),
       commonjs(),
-      // babel({
-      //   babelHelpers: "runtime",
-      //   exclude: "node_modules/**"
-      // })
-      // getBabelOutputPlugin({
-      //   // allowAllFormats: true,
-      //   configFile: path.resolve(__dirname, 'babel.config.js')
-      // }),
-      strip(),
-      filesize()
+      babel({
+        babelHelpers: 'runtime',
+        exclude: 'node_modules/**',
+        extensions,
+      }),
+      filesize(),
     ],
-    external: id => /lodash|core-js/.test(id) || id.includes('@babel/runtime')
-  }
+    external: (id) => {
+      console.log('id: ', id)
+      return /lodash|core-js|@babel\/runtime/.test(id)
+    },
+  },
 ]
