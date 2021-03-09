@@ -40,7 +40,7 @@ export default [
       }),
 
       strip(),
-      terser(),
+      terser({ ie8: true }),
       filesize(),
     ],
   },
@@ -70,6 +70,6 @@ export default [
       }),
       filesize(),
     ],
-    external: (id) => /lodash|core-js|@babel\/runtime/.test(id),
+    external: (id) => /core-js|@babel\/runtime/.test(id),
   },
 ]

@@ -12,5 +12,5 @@ module.exports = {
       },
     ],
   ],
-  plugins: [['@babel/plugin-transform-runtime'], 'lodash'],
+  plugins: [['@babel/plugin-transform-runtime']],
 }
