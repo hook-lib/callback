@@ -1,96 +1,108 @@
-import { sortBy } from 'lodash'
-
-interface groups {
-  [key: string]: any
+type groups = {
+  [group: string]: number
 }
-
-interface func {
+// type arg = {
+//   defaultOrder?: number
+//   defaultGroup?: string
+// }
+type options = {
+  defaultOrder?: number
+  defaultGroup?: string
+  initDefaultGroup?: boolean
+}
+export interface method {
   (...items: any[]): any
 }
 
-interface arg {
-  defaultOrder?: number
-  defaultExtra?: number
-}
-
-interface item {
-  method: func
+export interface item {
+  method: method
   group?: string
-  extra?: number
-  id?: string
   [key: string]: any
 }
+
+export interface filter {
+  (item: item): boolean
+}
+
 export default class Callback {
+  public groups: groups = {}
+  public items: item[] = []
   private defaultOrder: number
-  private defaultExtra: number
-  public items: any[] = []
-  public readonly groups: groups = {}
-  constructor(options?: arg) {
+  private defaultGroup: string
+  constructor(options?: options) {
     const config = Object.assign(
       {
         defaultOrder: 1000,
-        defaultExtra: 1000,
+        defaultGroup: 'default',
+        initDefaultGroup: true,
       },
       options,
     )
-
     this.defaultOrder = config.defaultOrder
-    this.defaultExtra = config.defaultExtra
+    this.defaultGroup = config.defaultGroup
+
+    if (config.initDefaultGroup) {
+      this.addGroup(this.defaultGroup)
+    }
   }
 
-  configGroup(
-    name: string,
-    order = this.defaultOrder,
-    defaultExtra = this.defaultExtra,
-  ) {
-    this.groups[name] = [order, defaultExtra]
+  hasGroup(group: string): boolean {
+    return Object.prototype.hasOwnProperty.call(this.groups, group)
+  }
+
+  getGroupOrder(group: string = this.defaultGroup): number {
+    if (this.hasGroup(group)) {
+      return this.groups[group]
+    }
+    return this.defaultOrder
+  }
+
+  addGroup(group: string, order: number = this.defaultOrder): Callback {
+    if (!this.hasGroup(group)) {
+      this.groups[group] = order
+    }
     return this
   }
 
-  getGroupConfig(name = '') {
-    const { groups } = this
-    if (groups[name]) {
-      return groups[name]
-    }
-    return [1000, 1000]
+  push(item: item): Callback {
+    return this._add(item, 'push')
   }
 
-  add({ method = () => {}, group = 'default', extra, id, ...other }: item) {
-    const item = { ...other, group, extra, id, method }
+  unshift(item: item): Callback {
+    return this._add(item, 'unshift')
+  }
 
-    if (!item.extra) {
-      if (item.extra !== 0) {
-        const config = this.getGroupConfig(group)
-        item.extra = config[1]
-      }
+  private _add(
+    { group = this.defaultGroup, ...other }: item,
+    type: 'push' | 'unshift',
+  ): Callback {
+    if (!this.hasGroup(group)) {
+      throw new Error(`group[${group}] not been added!`)
     }
-    this.items.push(item)
+    const item = { ...other, group }
+    this.items[type](item)
     return this
   }
 
-  getAll() {
-    return this._sort(this.items)
-  }
-
-  getItems(filter: (item: item) => boolean) {
+  getItems(filter: filter): item[] {
     return this.items.filter(filter)
   }
 
-  getById(id: string, group?: string) {
-    const filter = group
-      ? (item: item) => item.group === group && item.id === id
-      : (item: item) => item.id === id
-    const arr = this.items.filter(filter)
-    return arr[0]
+  getByGroup(group: string = this.defaultGroup): item[] {
+    return this.sort(this.getItems((item: item) => item.group === group))
   }
 
-  getByGroup(name: string, extra?: number) {
-    const filter =
-      typeof extra === 'undefined'
-        ? (item: item) => item.group === name
-        : (item: item) => item.group === name && item.extra === extra
-    const arr = this.items.filter(filter)
-    return this._sort(arr)
+  getAll(): item[] {
+    return this.sort(this.items)
+  }
+
+  removeItems(filter: filter): Callback {
+    this.items = this.items.filter((item) => !filter(item))
+    return this
+  }
+
+  removeByGroup(group: string = this.defaultGroup): Callback {
+    return this.removeItems((item: item) => item.group === group)
   }
 
   removeAll() {
@@ -98,36 +110,10 @@ export default class Callback {
     return this
   }
 
-  removeItems(filter: (item: item) => boolean) {
-    this.items = this.items.filter((item) => !filter(item))
-    return this
-  }
-
-  removeByGroup(name: string, extra: number) {
-    const filter =
-      typeof extra === 'undefined'
-        ? (item: item) => item.group !== name
-        : (item: item) => !(item.group === name && item.extra === extra)
-    this.items = this.items.filter(filter)
-    return this
-  }
-
-  removeById(id: string, group: string) {
-    const filter = group
-      ? (item: item) => !(item.group === group && item.id === id)
-      : (item: item) => item.id !== id
-    this.items = this.items.filter(filter)
-    return this
-  }
-
-  private _sort(arr: item[] = []): item[] {
-    return sortBy(arr, [
-      (item: item) => {
-        const { group } = item
-        const [order] = this.getGroupConfig(group)
-        return order
-      },
-      (item: item) => item.extra,
-    ])
+  sort(items: item[]): item[] {
+    return items.sort(
+      (a: item, b: item) =>
+        this.getGroupOrder(a.group) - this.getGroupOrder(b.group),
+    )
   }
 }
