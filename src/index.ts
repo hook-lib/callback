@@ -1,28 +1,20 @@
-type groups = {
+export type groups = {
   [group: string]: number
 }
-// type arg = {
-//   defaultOrder?: number
-//   defaultGroup?: string
-// }
-type options = {
+
+export type options = {
   defaultOrder?: number
   defaultGroup?: string
   initDefaultGroup?: boolean
 }
-export interface method {
-  (...items: any[]): any
-}
 
-export interface item {
-  method: method
+export type item = {
+  method: (...items: any[]) => any
   group?: string
   [key: string]: any
 }
 
-export interface filter {
-  (item: item): boolean
-}
+export type filter = (item: item) => boolean
 
 export default class Callback {
   public groups: groups = {}
@@ -42,7 +34,7 @@ export default class Callback {
     this.defaultGroup = config.defaultGroup
 
     if (config.initDefaultGroup) {
-      this.addGroup(this.defaultGroup)
+      this.setGroup(this.defaultGroup)
     }
   }
 
@@ -55,13 +47,6 @@ export default class Callback {
       return this.groups[group]
     }
     return this.defaultOrder
-  }
-
-  addGroup(group: string, order: number = this.defaultOrder): Callback {
-    if (!this.hasGroup(group)) {
-      this.groups[group] = order
-    }
-    return this
   }
 
   setGroup(group: string, order: number = this.defaultOrder): Callback {

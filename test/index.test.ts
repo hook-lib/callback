@@ -28,9 +28,6 @@ test('hasGroup method', () => {
   const cb = new Callback()
   expect(cb.hasGroup('default')).toEqual(true)
   expect(cb.hasGroup('foo')).toEqual(false)
-
-  cb.addGroup('foo')
-  expect(cb.hasGroup('foo')).toEqual(true)
 })
 test('getGroupOrder method', () => {
   const cb = new Callback()
@@ -40,14 +37,6 @@ test('getGroupOrder method', () => {
   expect(cb2.getGroupOrder('default')).toEqual(2000)
 })
 
-test('addGroup method', () => {
-  const cb = new Callback()
-  cb.addGroup('foo')
-  expect(cb.groups).toHaveProperty('foo', 1000)
-
-  cb.addGroup('foo', 2000)
-  expect(cb.groups).toHaveProperty('foo', 1000)
-})
 test('setGroup method', () => {
   const cb = new Callback()
 
@@ -68,15 +57,6 @@ test('setGroups method', () => {
   expect(cb.groups).toHaveProperty('foo', 2000)
   expect(cb.groups).toHaveProperty('bar', 3000)
   expect(cb.groups).toHaveProperty('default', 1000)
-})
-
-test('use addGroup method to exists group', () => {
-  const cb = new Callback()
-  cb.addGroup('foo')
-  expect(cb.groups).toHaveProperty('foo', 1000)
-
-  cb.addGroup('foo', 2000)
-  expect(cb.groups).toHaveProperty('foo', 1000)
 })
 
 test('push method', () => {
@@ -121,7 +101,7 @@ test('getItems method', () => {
 
 test('getByGroup method', () => {
   const cb = new Callback()
-  cb.addGroup('foo', 2000)
+  cb.setGroup('foo', 2000)
 
   cb.push({ group: 'foo', method() {} }).push({ group: 'foo', method() {} })
 
@@ -134,7 +114,7 @@ test('getByGroup method', () => {
 
 test('getAll method', () => {
   const cb = new Callback()
-  cb.addGroup('foo', 2000)
+  cb.setGroup('foo', 2000)
   cb.push({ group: 'foo', method() {}, flag: 'third' }).push({
     group: 'foo',
     method() {},
@@ -165,7 +145,7 @@ test('removeItems method', () => {
 
 test('removeByGroup method', () => {
   const cb = new Callback()
-  cb.addGroup('foo')
+  cb.setGroup('foo')
   cb.push({ group: 'foo', method() {} }).push({ group: 'foo', method() {} })
 
   cb.push({ method() {} })
@@ -186,7 +166,7 @@ test('removeAll method', () => {
 
 test('sort method', () => {
   const cb = new Callback()
-  cb.addGroup('foo', 2000)
+  cb.setGroup('foo', 2000)
   cb.push({ group: 'foo', method() {}, flag: 'third' }).push({
     group: 'foo',
     method() {},
@@ -206,7 +186,7 @@ test('sort method', () => {
 
 test('two equal order groups', () => {
   const cb = new Callback()
-  cb.addGroup('foo')
+  cb.setGroup('foo')
   cb.push({ group: 'foo', method() {}, flag: 'third' }).push({
     group: 'foo',
     method() {},
