@@ -35,12 +35,13 @@ export default [
       commonjs(),
       babel({
         babelHelpers: 'runtime',
-        exclude: 'node_modules/**',
+        exclude: [/\/node_modules\//],
+        // exclude: [/\/core-js\//, /\/@babel\/runtime\//],
         extensions,
       }),
 
       strip(),
-      terser({ ie8: true }),
+      terser(),
       filesize(),
     ],
   },
