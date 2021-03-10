@@ -64,6 +64,16 @@ export default class Callback {
     return this
   }
 
+  setGroup(group: string, order: number = this.defaultOrder): Callback {
+    this.groups[group] = order
+    return this
+  }
+
+  setGroups(groups: { [group: string]: number }): Callback {
+    Object.assign(this.groups, groups)
+    return this
+  }
+
   push(item: item): Callback {
     return this._add(item, 'push')
   }
@@ -76,9 +86,6 @@ export default class Callback {
     { group = this.defaultGroup, ...other }: item,
     type: 'push' | 'unshift',
   ): Callback {
-    if (!this.hasGroup(group)) {
-      throw new Error(`group[${group}] not been added!`)
-    }
     const item = { ...other, group }
     this.items[type](item)
     return this

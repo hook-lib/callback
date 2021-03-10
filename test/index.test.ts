@@ -44,7 +44,32 @@ test('addGroup method', () => {
   const cb = new Callback()
   cb.addGroup('foo')
   expect(cb.groups).toHaveProperty('foo', 1000)
+
+  cb.addGroup('foo', 2000)
+  expect(cb.groups).toHaveProperty('foo', 1000)
 })
+test('setGroup method', () => {
+  const cb = new Callback()
+
+  cb.setGroup('foo')
+  expect(cb.groups).toHaveProperty('foo', 1000)
+
+  cb.setGroup('foo', 2000)
+  expect(cb.groups).toHaveProperty('foo', 2000)
+})
+
+test('setGroups method', () => {
+  const cb = new Callback()
+
+  cb.setGroups({
+    foo: 2000,
+    bar: 3000,
+  })
+  expect(cb.groups).toHaveProperty('foo', 2000)
+  expect(cb.groups).toHaveProperty('bar', 3000)
+  expect(cb.groups).toHaveProperty('default', 1000)
+})
+
 test('use addGroup method to exists group', () => {
   const cb = new Callback()
   cb.addGroup('foo')
