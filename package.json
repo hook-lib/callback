@@ -1,6 +1,6 @@
 {
   "name": "@hook/callback",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "rollup typescript babel eslint prettier browser ie lib",
   "browser": "./dist/index.umd.js",
   "main": "./dist/index.cjs.js",

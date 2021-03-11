@@ -2,7 +2,7 @@ export type groups = {
   [group: string]: number
 }
 
-export type options = {
+export interface options {
   defaultOrder?: number
   defaultGroup?: string
   initDefaultGroup?: boolean
@@ -97,7 +97,7 @@ export default class Callback {
     return this.removeItems((item: item) => item.group === group)
   }
 
-  removeAll() {
+  removeAll(): this {
     this.items = []
     return this
   }
