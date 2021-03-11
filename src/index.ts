@@ -49,28 +49,28 @@ export default class Callback {
     return this.defaultOrder
   }
 
-  setGroup(group: string, order: number = this.defaultOrder): Callback {
+  setGroup(group: string, order: number = this.defaultOrder): this {
     this.groups[group] = order
     return this
   }
 
-  setGroups(groups: { [group: string]: number }): Callback {
+  setGroups(groups: { [group: string]: number }): this {
     Object.assign(this.groups, groups)
     return this
   }
 
-  push(item: item): Callback {
+  push(item: item): this {
     return this._add(item, 'push')
   }
 
-  unshift(item: item): Callback {
+  unshift(item: item): this {
     return this._add(item, 'unshift')
   }
 
   private _add(
     { group = this.defaultGroup, ...other }: item,
     type: 'push' | 'unshift',
-  ): Callback {
+  ): this {
     const item = { ...other, group }
     this.items[type](item)
     return this
@@ -88,12 +88,12 @@ export default class Callback {
     return this.sort(this.items)
   }
 
-  removeItems(filter: filter): Callback {
+  removeItems(filter: filter): this {
     this.items = this.items.filter((item) => !filter(item))
     return this
   }
 
-  removeByGroup(group: string = this.defaultGroup): Callback {
+  removeByGroup(group: string = this.defaultGroup): this {
     return this.removeItems((item: item) => item.group === group)
   }
 
